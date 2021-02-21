@@ -35,7 +35,11 @@ server.get('/weather', (req, res) => {
 })
 
 server.use('*', (req, res) => {
-    res.status(404).send('route not found')
+    const errObj = {
+        status: '500',
+        responseText: "Sorry, something went wrong"
+    }
+    res.status(500).send(errObj);
 })
 
 function Location(locationData) {
