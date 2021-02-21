@@ -38,6 +38,16 @@ Finish time: 4:00pm
 
 Actual time needed to complete: 45 minutes
 
-01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource.
+### Feature 3: ERROR
+
+Estimate of time needed to complete: 30 minutes
+
+Start time: 4:00pm
+
+Finish time: 4:05pm
+
+Actual time needed to complete: 5 minutes
+
+21-02-2021 4:05pm - Application now has a fully-functional express server, with a GET route for the location resource.
 
 <!-- ## Credits and Collaborations -->
