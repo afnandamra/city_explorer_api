@@ -24,6 +24,16 @@ server.get('/location', (req, res) => {
     res.send(locObj);
 })
 
+server.get('/weather', (req, res) => {
+    const weathData = require('./data/weather.json');
+    let weathArr = [];
+    weathData.data.forEach(val => {
+        const weather = new Weather(val.weather.description, val.valid_date);
+        weathArr.push(weather);
+    });
+    res.send(weathArr);
+})
+
 server.use('*', (req, res) => {
     res.status(404).send('route not found')
 })
@@ -33,6 +43,11 @@ function Location(locationData) {
     this.formatted_query = locationData[0].display_name;
     this.latitude = locationData[0].lat;
     this.longitude = locationData[0].lon;
+}
+
+function Weather(forecast, time) {
+    this.forecast = forecast;
+    this.time = time;
 }
 
 server.listen(PORT, () => {
