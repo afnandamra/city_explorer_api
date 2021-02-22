@@ -69,7 +69,7 @@ function parksRoute(req, res) {
     console.log(req.query);
     let code = req.query.latitude + ',' + req.query.longitude;
     let key = process.env.PARKS_API_KEY;
-    let url = `https://developer.nps.gov/api/v1/parks?parkCode=${code}&api_key=${key}`;
+    let url = `https://developer.nps.gov/api/v1/parks?parkCode=${code}&limit=5&api_key=${key}`;
     superagent.get(url)
         .then(parkData => {
             // console.log(parkData.body.data[0].entranceFees[0].cost);
