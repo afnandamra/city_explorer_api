@@ -20,17 +20,13 @@ server.get('/', (req, res) => {
 
 server.get('/location', (req, res) => {
     const locData = require('./data/location.json');
-    const locObj = new Location(locData);
+    const locObj = new Location(locData[0]);
     res.send(locObj);
 })
 
 server.get('/weather', (req, res) => {
     const weathData = require('./data/weather.json');
-    let weathArr = [];
-    weathData.data.forEach(val => {
-        const weather = new Weather(val.weather.description, val.valid_date);
-        weathArr.push(weather);
-    });
+    let weathArr = weathData.data.map(val => new Weather(val));
     res.send(weathArr);
 })
 
@@ -43,15 +39,15 @@ server.use('*', (req, res) => {
 })
 
 function Location(locationData) {
-    this.search_query = locationData[0].display_name.split(',')[0];
-    this.formatted_query = locationData[0].display_name;
-    this.latitude = locationData[0].lat;
-    this.longitude = locationData[0].lon;
+    this.search_query = locationData.display_name.split(',')[0];
+    this.formatted_query = locationData.display_name;
+    this.latitude = locationData.lat;
+    this.longitude = locationData.lon;
 }
 
-function Weather(forecast, time) {
-    this.forecast = forecast;
-    this.time = time;
+function Weather(weatherData) {
+    this.forecast = weatherData.weather.description;
+    this.time = weatherData.valid_date;
 }
 
 server.listen(PORT, () => {
