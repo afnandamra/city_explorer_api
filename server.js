@@ -30,7 +30,11 @@ server.get('/weather', (req, res) => {
     res.send(weathArr);
 })
 
-server.use('*', (req, res) => {
+server.get('*', (req, res) => {
+    res.status(404).send("Not found");
+})
+
+server.use((error, req, res) => {
     const errObj = {
         status: '500',
         responseText: "Sorry, something went wrong"
@@ -47,7 +51,7 @@ function Location(locationData) {
 
 function Weather(weatherData) {
     this.forecast = weatherData.weather.description;
-    this.time = weatherData.valid_date;
+    this.time = new Date(weatherData.valid_date).toString().slice(0, 15);
 }
 
 server.listen(PORT, () => {
