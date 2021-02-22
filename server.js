@@ -1,49 +1,100 @@
-'use strict'
+'use strict';
 
+// Application Dependencies
 const express = require('express');
-require('dotenv').config();
-
+//CORS = Cross Origin Resource Sharing
 const cors = require('cors');
+//DOTENV (read our enviroment variable)
+require('dotenv').config();
+const superagent = require('superagent');
 
-const server = express();
 
+//Application Setup
 const PORT = process.env.PORT || 3030;
+const server = express();
 server.use(cors());
+
+
+// Routes Definitions
+server.get('/', homeRoute);
+server.get('/location', locationRoute);
+server.get('/weather', weatherRoute);
+server.get('/parks', parksRoute);
+server.get('*', notFoundRoute);
+server.use(handleErrors);
+
+// Location: https://eu1.locationiq.com/v1/search.php?key=YOUR_ACCESS_TOKEN&q=SEARCH_STRING&format=json
+// Weather: https://api.weatherbit.io/v2.0/forecast/daily?city=Raleigh,NC&key=API_KEY
+// Parks: https://developer.nps.gov/api/v1/parks?parkCode=acad&api_key=YOUR_KEY
 
 server.get('/test', (req, res) => {
     res.send('your server is working fine!!')
 })
 
-server.get('/', (req, res) => {
+function homeRoute(req, res) {
     res.send('home route');
-})
+}
 
-server.get('/location', (req, res) => {
-    const locData = require('./data/location.json');
-    const locObj = new Location(locData[0]);
-    res.send(locObj);
-})
+function locationRoute(req, res) {
+    // const locData = require('./data/location.json');
+    const cityName = req.query.city;
+    let key = process.env.GEOCODE_API_KEY;
+    let url = `https://eu1.locationiq.com/v1/search.php?key=${key}&q=${cityName}&format=json`;
+    superagent.get(url)
+        .then(locData => {
+            const locObj = new Location(cityName, locData.body[0]);
+            res.send(locObj);
+        })
+        .catch(() => {
+            handleErrors('Error in getting data from LocationIQ', req, res)
+        })
+}
 
-server.get('/weather', (req, res) => {
-    const weathData = require('./data/weather.json');
-    let weathArr = weathData.data.map(val => new Weather(val));
-    res.send(weathArr);
-})
+function weatherRoute(req, res) {
+    // const weathData = require('./data/weather.json');
+    let city = req.query.search_query;
+    let key = process.env.WEATHER_API_KEY;
+    let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&key=${key}`;
+    superagent.get(url)
+        .then(weathData => {
+            let weathArr = weathData.body.data.map(val => new Weather(val));
+            res.send(weathArr);
+        })
+        .catch(() => {
+            handleErrors('Error in getting data from LocationIQ', req, res)
+        })
+}
 
-server.get('*', (req, res) => {
-    res.status(404).send("Not found");
-})
+function parksRoute(req, res) {
+    console.log(req.query);
+    let code = req.query.latitude + ',' + req.query.longitude;
+    let key = process.env.PARKS_API_KEY;
+    let url = `https://developer.nps.gov/api/v1/parks?parkCode=${code}&api_key=${key}`;
+    superagent.get(url)
+        .then(parkData => {
+            // console.log(parkData.body.data[0].entranceFees[0].cost);
+            let parkArr = parkData.body.data.map(val => new Park(val));
+            res.send(parkArr);
+        })
+        .catch(() => {
+            handleErrors('Error in getting data from LocationIQ', req, res)
+        })
+}
 
-server.use((error, req, res) => {
+function notFoundRoute(req, res) {
+    res.status(404).send('Not found');
+}
+
+function handleErrors(error, req, res) {
     const errObj = {
         status: '500',
-        responseText: "Sorry, something went wrong"
+        responseText: 'Sorry, something went wrong'
     }
     res.status(500).send(errObj);
-})
+}
 
-function Location(locationData) {
-    this.search_query = locationData.display_name.split(',')[0];
+function Location(cityName, locationData) {
+    this.search_query = cityName;
     this.formatted_query = locationData.display_name;
     this.latitude = locationData.lat;
     this.longitude = locationData.lon;
@@ -52,6 +103,15 @@ function Location(locationData) {
 function Weather(weatherData) {
     this.forecast = weatherData.weather.description;
     this.time = new Date(weatherData.valid_date).toString().slice(0, 15);
+}
+
+function Park(parkData) {
+    this.name = parkData.name;
+    this.address = `"${parkData.addresses[0].line1}" "${parkData.addresses[0].city}" "${parkData.addresses[0].stateCode}" "${parkData.addresses[0].postalCode}"`;
+    // this.fee = parkData.entranceFees[0].cost;
+    this.fee = '0.00';
+    this.description = parkData.description;
+    this.url = parkData.url;
 }
 
 server.listen(PORT, () => {
