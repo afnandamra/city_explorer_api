@@ -4,6 +4,7 @@
 **Version:**
 * 1.0.0 - 21-2-2021 - Getting data from local server
 * 2.0.0 - 22-2-2021 - Getting data from API servers
+* 2.0.1 - 23-2-2021 - Fixing bugs
 
 
 ## Overview
