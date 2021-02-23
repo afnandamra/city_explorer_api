@@ -16,9 +16,9 @@ const pg = require('pg');
 //Application Setup
 const PORT = process.env.PORT || 3030;
 const server = express();
-server.use(cors());
 const client = new pg.Client(process.env.DATABASE_URL);
 
+server.use(cors());
 
 // Routes Definitions
 server.get('/', homeRoute);

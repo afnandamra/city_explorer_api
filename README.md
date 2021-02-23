@@ -115,9 +115,9 @@ Actual time needed to complete: 2 hour
 
 #### Feature 3: Deploy
 
-Estimate of time needed to complete: 
+Estimate of time needed to complete: 15 minutes
 
-Start time: pm
+Start time: 5:45pm
 
 Finish time: pm
 
