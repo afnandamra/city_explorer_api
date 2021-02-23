@@ -40,6 +40,8 @@ function homeRoute(req, res) {
     res.send('home route');
 }
 
+
+// Handling location
 function locationRoute(req, res) {
     // const locData = require('./data/location.json');
     const cityName = req.query.city;
@@ -78,6 +80,8 @@ function locationRoute(req, res) {
         })
 }
 
+
+// Handling weather
 function weatherRoute(req, res) {
     // const weathData = require('./data/weather.json');
     let city = req.query.search_query;
@@ -93,6 +97,8 @@ function weatherRoute(req, res) {
         })
 }
 
+
+// Handling parks
 function parksRoute(req, res) {
     let code = req.query.search_query;
     let key = process.env.PARKS_API_KEY;

@@ -6,6 +6,7 @@
 * 2.0.0 - 22-2-2021 - Getting data from API servers
 * 2.0.1 - 23-2-2021 - Fixing bugs
 * 2.1.0 - 23-2-2021 - Adding DataBase
+* 2.1.1 - 23-2-2021 - Fixing bugs
 
 
 ## Overview
@@ -95,7 +96,7 @@ Actual time needed to complete: 1 hour
 
 ### Lab 8 : 23-2-2021
 
-23-02-2021 6:00pm -  Application now has a fully-functional express server, with a GET route for the location / weather / parks resource, from API servers. It's working great locally, but in heroku there is an issue
+23-02-2021 6:00pm -  Application now has a fully-functional express server, with a GET route for the location / weather / parks resource, from API servers. And storing/retrieving it to/from postqresql DB.
 
 #### Feature 1: Database
 
