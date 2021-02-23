@@ -45,13 +45,34 @@ function locationRoute(req, res) {
     const cityName = req.query.city;
     let key = process.env.GEOCODE_API_KEY;
     let url = `https://eu1.locationiq.com/v1/search.php?key=${key}&q=${cityName}&format=json`;
-    superagent.get(url)
-        .then(locData => {
-            const locObj = new Location(cityName, locData.body[0]);
-            res.send(locObj);
-        })
-        .catch(() => {
-            handleErrors('Error in getting data from LocationIQ', req, res)
+    const SQL = `SELECT * FROM locations WHERE search_query = '${cityName}';`;
+    client.query(SQL)
+        .then(data => {
+            console.log(data);
+            if (data.rows.length === 0) {
+                superagent.get(url)
+                    .then(locData => {
+                        const locObj = new Location(cityName, locData.body[0]);
+                        // add data to DB
+                        const SQLIN = `INSERT INTO locations
+                                    (search_query, formatted_query, latitude, longitude)
+                                    VALUES ($1,$2,$3,$4);`;
+                        let safeValues = [cityName, locObj.formatted_query, locObj.latitude, locObj.longitude];
+                        client.query(SQLIN, safeValues)
+                            .then(val => {
+                                res.send(locObj);
+                            })
+                    })
+                    .catch(() => {
+                        handleErrors('Error in getting data from LocationIQ', req, res)
+                    })
+            } else if (data.rows[0].search_query === cityName) {
+                // get data from DB
+                const DBObj = new Location(data.rows[0].search_query, data.rows[0]); // WTH?
+                res.send(DBObj);
+            }
+        }).catch(() => {
+            handleErrors('Error in getting data from DB', req, res)
         })
 }
 
@@ -66,7 +87,7 @@ function weatherRoute(req, res) {
             res.send(weathArr);
         })
         .catch(() => {
-            handleErrors('Error in getting data from LocationIQ', req, res)
+            handleErrors('Error in getting data from WeatherBit', req, res)
         })
 }
 
@@ -80,7 +101,7 @@ function parksRoute(req, res) {
             res.send(parkArr);
         })
         .catch(() => {
-            handleErrors('Error in getting data from LocationIQ', req, res)
+            handleErrors('Error in getting data from NPS', req, res)
         })
 }
 
@@ -91,16 +112,16 @@ function notFoundRoute(req, res) {
 function handleErrors(error, req, res) {
     const errObj = {
         status: '500',
-        responseText: 'Sorry, something went wrong'
+        responseText: error
     }
     res.status(500).send(errObj);
 }
 
 function Location(cityName, locationData) {
     this.search_query = cityName;
-    this.formatted_query = locationData.display_name;
-    this.latitude = locationData.lat;
-    this.longitude = locationData.lon;
+    this.formatted_query = locationData.display_name || locationData.formatted_query;
+    this.latitude = locationData.lat || locationData.latitude;
+    this.longitude = locationData.lon || locationData.longitude;
 }
 
 function Weather(weatherData) {

@@ -105,13 +105,13 @@ Actual time needed to complete: 10 minutes
 
 #### Feature 2: Server
 
-Estimate of time needed to complete: 
+Estimate of time needed to complete: 1 hour
 
-Start time: pm
+Start time: 3:30pm
 
-Finish time: pm
+Finish time: 5:30pm
 
-Actual time needed to complete: 
+Actual time needed to complete: 2 hour
 
 #### Feature 3: Deploy
 
@@ -125,3 +125,5 @@ Actual time needed to complete:
 
 ## Credits and Collaborations
 - Pair programming with Lina Al-Mashaikh in lab 07.
+- Pair programming with Aya Berjawi in lab 08.
+
