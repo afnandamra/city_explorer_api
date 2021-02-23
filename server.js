@@ -6,13 +6,18 @@ const express = require('express');
 const cors = require('cors');
 //DOTENV (read our enviroment variable)
 require('dotenv').config();
+// Superagent
 const superagent = require('superagent');
+// postgresql
+const pg = require('pg');
+
 
 
 //Application Setup
 const PORT = process.env.PORT || 3030;
 const server = express();
 server.use(cors());
+const client = new pg.Client(process.env.DATABASE_URL);
 
 
 // Routes Definitions
@@ -111,6 +116,8 @@ function Park(parkData) {
     this.url = parkData.url;
 }
 
-server.listen(PORT, () => {
-    console.log(`test ${PORT}`);
-})
+client.connect()
+    .then(server.listen(PORT, () => {
+        console.log(`test ${PORT}`);
+    })
+    )

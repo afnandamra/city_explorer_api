@@ -89,5 +89,39 @@ Finish time: 5:00pm
 
 Actual time needed to complete: 1 hour
 
+### Lab 8 : 23-2-2021
+
+23-02-2021 (time)pm - <!--  Application now has a fully-functional express server, with a GET route for the location / weather / parks resource, from API servers. -->
+
+#### Feature 1: Database
+
+Estimate of time needed to complete: 30 minutes
+
+Start time: 3:20pm
+
+Finish time: 3:30 pm
+
+Actual time needed to complete: 10 minutes
+
+#### Feature 2: Server
+
+Estimate of time needed to complete: 
+
+Start time: pm
+
+Finish time: pm
+
+Actual time needed to complete: 
+
+#### Feature 3: Deploy
+
+Estimate of time needed to complete: 
+
+Start time: pm
+
+Finish time: pm
+
+Actual time needed to complete: 
+
 ## Credits and Collaborations
 - Pair programming with Lina Al-Mashaikh in lab 07.
