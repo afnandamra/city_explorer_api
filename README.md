@@ -7,7 +7,7 @@
 
 
 ## Overview
-This project is my start point towards back-end developing, an app that provide you with the Geograpgh & Wether & Yelp & Movie DB & Hiking for any Location that you insert..
+This project is my start point towards back-end developing, an app that provide you with the Geograpgh & Wether & Yelp & Movie DB & Parks for any Location that you insert..
 
 ## Getting Started
 insert this link:
@@ -17,7 +17,7 @@ inside this link:
 and have fun :smiley:
 
 ## Architecture
-Node.js and Express.js for the backend
+Node.js and Express.js for the back-end
 
 ## Change Log
 
@@ -56,7 +56,7 @@ Actual time needed to complete: 5 minutes
 
 ### Lab 7 : 22-2-2021
 
-22-02-2021 (time)pm - Application now has a fully-functional express server, with a GET route for the location / weather / parks resource.
+22-02-2021 6:00pm - Application now has a fully-functional express server, with a GET route for the location / weather / parks resource, from API servers.
 
 #### Feature 1: Location
 
@@ -89,4 +89,4 @@ Finish time: 5:00pm
 Actual time needed to complete: 1 hour
 
 ## Credits and Collaborations
-- Collaborated with Lina Al-Mashaikh on the weather handling function
+- Pair programming with Lina Al-Mashaikh in lab 07.
