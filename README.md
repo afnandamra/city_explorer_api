@@ -5,6 +5,7 @@
 * 1.0.0 - 21-2-2021 - Getting data from local server
 * 2.0.0 - 22-2-2021 - Getting data from API servers
 * 2.0.1 - 23-2-2021 - Fixing bugs
+* 2.1.0 - 23-2-2021 - Adding DataBase
 
 
 ## Overview
@@ -18,7 +19,8 @@ inside this link:
 and have fun :smiley:
 
 ## Architecture
-Node.js and Express.js for the back-end
+- Node.js and Express.js for the back-end. 
+- Postgresql for the DataBase
 
 ## Change Log
 
@@ -91,7 +93,7 @@ Actual time needed to complete: 1 hour
 
 ### Lab 8 : 23-2-2021
 
-23-02-2021 (time)pm - <!--  Application now has a fully-functional express server, with a GET route for the location / weather / parks resource, from API servers. -->
+23-02-2021 6:00pm -  Application now has a fully-functional express server, with a GET route for the location / weather / parks resource, from API servers. It's working great locally, but in heroku there is an issue
 
 #### Feature 1: Database
 
@@ -119,11 +121,11 @@ Estimate of time needed to complete: 15 minutes
 
 Start time: 5:45pm
 
-Finish time: pm
+Finish time: 6:00pm
 
-Actual time needed to complete: 
+Actual time needed to complete: 15 minutes
 
 ## Credits and Collaborations
 - Pair programming with Lina Al-Mashaikh in lab 07.
-- Pair programming with Aya Berjawi in lab 08.
+<!-- - Pair programming with Aya Berjawi in lab 08. -->
 
