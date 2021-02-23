@@ -33,7 +33,7 @@ server.use(handleErrors);
 // Parks: https://developer.nps.gov/api/v1/parks?parkCode=acad&api_key=YOUR_KEY
 
 server.get('/test', (req, res) => {
-    res.send('your server is working fine!!')
+    res.send('your server is working fine!!');
 })
 
 function homeRoute(req, res) {
@@ -61,6 +61,8 @@ function locationRoute(req, res) {
                         client.query(SQLIN, safeValues)
                             .then(val => {
                                 res.send(locObj);
+                            }).catch(() => {
+                                handleErrors('Error logging the dato to the DB', req, res)
                             })
                     })
                     .catch(() => {
@@ -105,6 +107,8 @@ function parksRoute(req, res) {
         })
 }
 
+
+// Error handling functions
 function notFoundRoute(req, res) {
     res.status(404).send('Not found');
 }
@@ -117,6 +121,8 @@ function handleErrors(error, req, res) {
     res.status(500).send(errObj);
 }
 
+
+// Constructors
 function Location(cityName, locationData) {
     this.search_query = cityName;
     this.formatted_query = locationData.display_name || locationData.formatted_query;
@@ -137,6 +143,8 @@ function Park(parkData) {
     this.url = parkData.url;
 }
 
+
+// connecting server and DB
 client.connect()
     .then(server.listen(PORT, () => {
         console.log(`test ${PORT}`);

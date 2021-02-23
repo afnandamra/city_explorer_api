@@ -18,6 +18,8 @@ inside this link:
 " https://codefellows.github.io/code-301-guide/curriculum/city-explorer-app/front-end/ "
 and have fun :smiley:
 
+if you want to clone the project make sure to install required libraries `npm i express dotenv cors pg superagent`.
+
 ## Architecture
 - Node.js and Express.js for the back-end. 
 - Postgresql for the DataBase
