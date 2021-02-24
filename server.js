@@ -58,7 +58,7 @@ function locationRoute(req, res) {
                         // add data to DB
                         const SQLIN = `INSERT INTO locations
                                     (search_query, formatted_query, latitude, longitude)
-                                    VALUES ($1,$2,$3,$4);`;
+                                    VALUES ($1,$2,$3,$4) RETURNING *;`;
                         let safeValues = [cityName, locObj.formatted_query, locObj.latitude, locObj.longitude];
                         client.query(SQLIN, safeValues)
                             .then(val => {
