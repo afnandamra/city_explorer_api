@@ -7,6 +7,7 @@
 * 2.0.1 - 23-2-2021 - Fixing bugs
 * 2.1.0 - 23-2-2021 - Adding DataBase
 * 2.1.1 - 23-2-2021 - Fixing bugs
+* 2.2.0 - 24-2-2021 - Adding Yelp and Movies data
 
 
 ## Overview
