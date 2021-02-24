@@ -12,11 +12,13 @@ const superagent = require('superagent');
 const pg = require('pg');
 
 
-
 //Application Setup
 const PORT = process.env.PORT || 3030;
 const server = express();
-const client = new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+// const client = new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+// const client = new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: process.env.DATABASE_URL ? true : false });
+const client = new pg.Client(process.env.DATABASE_URL) || new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+
 
 server.use(cors());
 
@@ -25,12 +27,18 @@ server.get('/', homeRoute);
 server.get('/location', locationRoute);
 server.get('/weather', weatherRoute);
 server.get('/parks', parksRoute);
+server.get('/movies', moviesRoute)
+server.get('/yelp', yelpRoute)
 server.get('*', notFoundRoute);
 server.use(handleErrors);
 
 // Location: https://eu1.locationiq.com/v1/search.php?key=YOUR_ACCESS_TOKEN&q=SEARCH_STRING&format=json
 // Weather: https://api.weatherbit.io/v2.0/forecast/daily?city=Raleigh,NC&key=API_KEY
 // Parks: https://developer.nps.gov/api/v1/parks?parkCode=acad&api_key=YOUR_KEY
+// Movies: https://api.themoviedb.org/3/search/movie?api_key=YOUR_KEY&language=en-US&query=seattle&page=1
+// Yelp: https://api.yelp.com/v3/businessses/search?latitude=21.545684&longitude=24.1565165&limit=5&offset=6
+
+
 
 server.get('/test', (req, res) => {
     res.send('your server is working fine!!');
@@ -50,7 +58,7 @@ function locationRoute(req, res) {
     const SQL = `SELECT * FROM locations WHERE search_query = '${cityName}';`;
     client.query(SQL)
         .then(data => {
-            console.log(data);
+            // console.log(data);
             if (data.rows.length === 0) {
                 superagent.get(url)
                     .then(locData => {
@@ -62,7 +70,7 @@ function locationRoute(req, res) {
                         let safeValues = [cityName, locObj.formatted_query, locObj.latitude, locObj.longitude];
                         client.query(SQLIN, safeValues)
                             .then(val => {
-                                res.send(locObj);
+                                res.send(val);
                             }).catch(() => {
                                 handleErrors('Error logging the dato to the DB', req, res)
                             })
@@ -102,7 +110,7 @@ function weatherRoute(req, res) {
 function parksRoute(req, res) {
     let code = req.query.search_query;
     let key = process.env.PARKS_API_KEY;
-    let url = `https://developer.nps.gov/api/v1/parks?q=${code}&limit=5&api_key=${key}`;
+    let url = `https://developer.nps.gov/api/v1/parks?q=${code}&limit=10&api_key=${key}`;
     superagent.get(url)
         .then(parkData => {
             let parkArr = parkData.body.data.map(val => new Park(val));
@@ -112,6 +120,43 @@ function parksRoute(req, res) {
             handleErrors('Error in getting data from NPS', req, res)
         })
 }
+
+
+// Handling movies
+function moviesRoute(req, res) {
+    let city = req.query.search_query;
+    let key = process.env.MOVIE_API_KEY;
+    let url = `https://api.themoviedb.org/3/search/multi?api_key=${key}&language=en-US&query=${city}&include_adult=false`;
+    superagent.get(url)
+        .then(movieData => {
+            let movieArr = movieData.body.results.map(val => new Movie(val));
+            res.send(movieArr);
+        })
+        .catch(() => {
+            handleErrors('Error in getting data from TheMovieDB', req, res)
+        })
+}
+
+
+// Handling Yelp
+function yelpRoute(req, res) {
+    let key = process.env.YELP_API_KEY;
+    let page = req.query.page;
+    let numPerPage = 5;
+    let start = ((page - 1) * numPerPage + 1);
+    let lat = req.query.latitude;
+    let lon = req.query.longitude;
+    let url = `https://api.yelp.com/v3/businesses/search?latitude=${lat}&longitude=${lon}&limit=${numPerPage}&offset=${start}`;
+    superagent.get(url)
+        .set("Authorization", `Bearer ${key}`)
+        .then(yelpData => {
+            let yelpArr = yelpData.body.businesses.map(val => new Yelp(val));
+            res.send(yelpArr);
+        }).catch(() => {
+            handleErrors('Error in getting data from Yelp', req, res)
+        })
+}
+
 
 
 // Error handling functions
@@ -147,6 +192,24 @@ function Park(parkData) {
     this.fee = parkData.entranceFees[0].cost || '0.00';
     this.description = parkData.description;
     this.url = parkData.url;
+}
+
+function Movie(movieData) {
+    this.title = movieData.title;
+    this.overview = movieData.overview;
+    this.average_votes = movieData.vote_average;
+    this.total_votes = movieData.vote_count;
+    this.image_url = `https://image.tmdb.org/t/p/w500${movieData.poster_path}`;
+    this.popularity = movieData.popularity;
+    this.released_on = movieData.release_date;
+}
+
+function Yelp(yelpData) {
+    this.name = yelpData.name;
+    this.image_url = yelpData.image_url;
+    this.price = yelpData.price;
+    this.rating = yelpData.rating;
+    this.url = yelpData.url;
 }
 
 
