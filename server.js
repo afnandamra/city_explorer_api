@@ -16,7 +16,10 @@ const pg = require('pg');
 //Application Setup
 const PORT = process.env.PORT || 3030;
 const server = express();
-const client = new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+// const client = new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+// const client = new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: process.env.DATABASE_URL ? true : false });
+const client = new pg.Client(process.env.DATABASE_URL) || new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+
 
 server.use(cors());
 
@@ -32,6 +35,10 @@ server.use(handleErrors);
 // Location: https://eu1.locationiq.com/v1/search.php?key=YOUR_ACCESS_TOKEN&q=SEARCH_STRING&format=json
 // Weather: https://api.weatherbit.io/v2.0/forecast/daily?city=Raleigh,NC&key=API_KEY
 // Parks: https://developer.nps.gov/api/v1/parks?parkCode=acad&api_key=YOUR_KEY
+// Movies: https://api.themoviedb.org/3/movie/550?api_key=c89654cd60dc0a1ef8ecfc4be3b3bee9
+// Movies: https://api.themoviedb.org/3/search/movie?api_key=c89654cd60dc0a1ef8ecfc4be3b3bee9&language=en-US&query=seattle&page=1&include_adult=false
+// Yelp: https://api.yelp.com/v3/businesses/search
+
 
 server.get('/test', (req, res) => {
     res.send('your server is working fine!!');
@@ -51,7 +58,7 @@ function locationRoute(req, res) {
     const SQL = `SELECT * FROM locations WHERE search_query = '${cityName}';`;
     client.query(SQL)
         .then(data => {
-            console.log(data);
+            // console.log(data);
             if (data.rows.length === 0) {
                 superagent.get(url)
                     .then(locData => {
@@ -117,13 +124,24 @@ function parksRoute(req, res) {
 
 // Handling movies
 function moviesRoute(req, res) {
-    console.log(req.query);
+    let city = req.query.search_query;
+    let page = req.query.page;
     let key = process.env.MOVIE_API_KEY;
-    let url = `https://api.themoviedb.org/3/movie/550?api_key=${key}`
+    let url = `https://api.themoviedb.org/3/search/multi?api_key=${key}&language=en-US&query=${city}&include_adult=false&page=${page}`;
+    superagent.get(url)
+        .then(movieData => {
+            let movieArr = movieData.body.results.map(val => new Movie(val));
+            console.log(movieArr);
+            res.send(movieArr);
+        })
+        .catch(() => {
+            handleErrors('Error in getting data from TheMovieDB', req, res)
+        })
 }
 
 
 // Handling Yelp
+
 
 
 // Error handling functions
@@ -161,15 +179,15 @@ function Park(parkData) {
     this.url = parkData.url;
 }
 
-// function Movie(){
-//     this.title=;
-//     this.overview=;
-//     this.average_votes=;
-//     this.total_votes=;
-//     this.image_url=;
-//     this.popularity=;
-//     this.released_on=;
-// }
+function Movie(movieData) {
+    this.title = movieData.title;
+    this.overview = movieData.overview;
+    this.average_votes = movieData.vote_average;
+    this.total_votes = movieData.vote_count;
+    this.image_url = `https://image.tmdb.org/t/p/w500${movieData.poster_path}`;
+    this.popularity = movieData.popularity;
+    this.released_on = movieData.release_date;
+}
 
 // function Yelp(){
 //     this.name=;
