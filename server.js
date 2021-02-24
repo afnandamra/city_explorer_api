@@ -25,6 +25,7 @@ server.get('/', homeRoute);
 server.get('/location', locationRoute);
 server.get('/weather', weatherRoute);
 server.get('/parks', parksRoute);
+server.get('/movies', moviesRoute)
 server.get('*', notFoundRoute);
 server.use(handleErrors);
 
@@ -62,7 +63,7 @@ function locationRoute(req, res) {
                         let safeValues = [cityName, locObj.formatted_query, locObj.latitude, locObj.longitude];
                         client.query(SQLIN, safeValues)
                             .then(val => {
-                                res.send(locObj);
+                                res.send(val);
                             }).catch(() => {
                                 handleErrors('Error logging the dato to the DB', req, res)
                             })
@@ -114,6 +115,17 @@ function parksRoute(req, res) {
 }
 
 
+// Handling movies
+function moviesRoute(req, res) {
+    console.log(req.query);
+    let key = process.env.MOVIE_API_KEY;
+    let url = `https://api.themoviedb.org/3/movie/550?api_key=${key}`
+}
+
+
+// Handling Yelp
+
+
 // Error handling functions
 function notFoundRoute(req, res) {
     res.status(404).send('Not found');
@@ -148,6 +160,24 @@ function Park(parkData) {
     this.description = parkData.description;
     this.url = parkData.url;
 }
+
+// function Movie(){
+//     this.title=;
+//     this.overview=;
+//     this.average_votes=;
+//     this.total_votes=;
+//     this.image_url=;
+//     this.popularity=;
+//     this.released_on=;
+// }
+
+// function Yelp(){
+//     this.name=;
+//     this.image_url=;
+//     this.price=;
+//     this.rating=;
+//     this.url=;
+// }
 
 
 // connecting server and DB

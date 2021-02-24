@@ -128,6 +128,40 @@ Finish time: 6:00pm
 
 Actual time needed to complete: 15 minutes
 
+### Lab 9 : 24-2-2021
+
+24-02-2021 pm -  Application now has a fully-functional express server, with a GET route for the location / weather / parks / movies / and yelp resource, from API servers.
+
+#### Feature 1: Movies
+
+Estimate of time needed to complete: 30 minutes
+
+Start time: 12:30pm
+
+Finish time:  pm
+
+Actual time needed to complete:  minutes
+
+#### Feature 2: Yelp
+
+Estimate of time needed to complete: 1 hour
+
+Start time: pm
+
+Finish time: pm
+
+Actual time needed to complete:  hour
+
+#### Feature 3: Pagination
+
+Estimate of time needed to complete: 15 minutes
+
+Start time: pm
+
+Finish time: pm
+
+Actual time needed to complete:  minutes
+
 ## Credits and Collaborations
 - Pair programming with Lina Al-Mashaikh in lab 07.
 <!-- - Pair programming with Aya Berjawi in lab 08. -->
