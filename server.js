@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3030;
 const server = express();
 const client = new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
 // const client = new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: process.env.DATABASE_URL ? true : false });
-// const client = new pg.Client(process.env.DATABASE_URL) || new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+// const client = new pg.Client(process.env.DATABASE_URL);
 
 
 server.use(cors());
@@ -140,15 +140,15 @@ function moviesRoute(req, res) {
 
 // Handling Yelp
 function yelpRoute(req, res) {
+    let lat = req.query.latitude;
+    let lon = req.query.longitude;
     let key = process.env.YELP_API_KEY;
     let page = req.query.page;
     let numPerPage = 5;
     let start = ((page - 1) * numPerPage + 1);
-    let lat = req.query.latitude;
-    let lon = req.query.longitude;
     let url = `https://api.yelp.com/v3/businesses/search?latitude=${lat}&longitude=${lon}&limit=${numPerPage}&offset=${start}`;
     superagent.get(url)
-        .set("Authorization", `Bearer ${key}`)
+        .set(`Authorization`, `Bearer ${key}`)
         .then(yelpData => {
             let yelpArr = yelpData.body.businesses.map(val => new Yelp(val));
             res.send(yelpArr);
@@ -161,7 +161,7 @@ function yelpRoute(req, res) {
 
 // Error handling functions
 function notFoundRoute(req, res) {
-    res.status(404).send('Not found');
+    res.status(404).send('Page Not found');
 }
 
 function handleErrors(error, req, res) {
